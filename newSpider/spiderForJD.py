@@ -36,16 +36,14 @@ def parse_website():
     wait = WebDriverWait(browser, 10)
     # 通过css选择器的id属性获得输入框。until方法表示浏览器完全加载到对应的节点，才返回相应的对象。presence_of_all_elements_located是通过css选择器加载节点
     input = wait.until(
-        EC.presence_of_all_elements_located((By.XPATH, "//input[@id='key']"))
-    )
+        EC.presence_of_all_elements_located((By.XPATH, "//input[@id='key']")))
 
     # input = browser.find_element_by_id('key')
     # 在输入框中写入要查询的信息
     input[0].send_keys('计算机书籍')
     # 查询按钮完全加载完毕，返回查询按钮对象
     submit_button = wait.until(
-        EC.element_to_be_clickable((By.CSS_SELECTOR, '.button'))
-    )
+        EC.element_to_be_clickable((By.CSS_SELECTOR, '.button')))
     # 点击查询按钮
     submit_button.click()
 
@@ -58,14 +56,13 @@ def parse_website():
     # 商品列表的总页数
     total = wait.until(
         EC.presence_of_all_elements_located(
-            (By.CSS_SELECTOR, '#J_bottomPage > span.p-skip > em:nth-child(1) > b')
-        )
-    )
+            (By.CSS_SELECTOR, '#J_bottomPage>span.p-skip>em:nth-child(1)>b')))
     html = browser.page_source.replace('xmlns', 'another_attr')
     parse_book(1, html)
 
     for page_num in range(2, int(total[0].text) + 1):
         parse_next_page(page_num, browser, wait)
+
 
 # 解析下一页
 
@@ -73,8 +70,7 @@ def parse_website():
 def parse_next_page(page_num, browser, wait):
     next_page_button = wait.until(
         EC.element_to_be_clickable(
-            (By.CSS_SELECTOR, '#J_bottomPage>span.p-num>a.pn-next > em'))
-    )
+            (By.CSS_SELECTOR, '#J_bottomPage>span.p-num>a.pn-next > em')))
     next_page_button.click()
 
     # 滑动到页面底部，用于加载数据
@@ -86,13 +82,12 @@ def parse_next_page(page_num, browser, wait):
     # 一页显示60个商品，"#J_goodsList > ul > li:nth-child(60)确保60个商品都正常加载出来。
     wait.until(
         EC.presence_of_all_elements_located(
-            (By.CSS_SELECTOR, "#J_goodsList > ul > li:nth-child(60)"))
-    )
+            (By.CSS_SELECTOR, "#J_goodsList > ul > li:nth-child(60)")))
     # 判断翻页成功，当底部的分页界面上显示第几页时，就显示翻页成功。
     wait.until(
         EC.text_to_be_present_in_element(
-            (By.CSS_SELECTOR, "#J_bottomPage > span.p-num > a.curr"), str(page_num))
-    )
+            (By.CSS_SELECTOR, "#J_bottomPage > span.p-num > a.curr"),
+            str(page_num)))
 
     html = browser.page_source.replace('xmlns', 'another_attr')
     parse_book(page_num, html)
@@ -112,13 +107,15 @@ def parse_book(page, html):
         book_name = item('.p-name').find('em').text()
         print('书名：' + book_name)
         price = item('.p-price').find('em').text() + \
-            str(item('.p-price').find('i').text())
+                str(item('.p-price').find('i').text())
         print('价格：' + price)
         # commit = item('.p-commit').find('strong').text()
         # print('评价数量：' + commit)
         shopnum = item('.p-shopnum').find('a').text()
         print('出版社：' + shopnum)
-        print('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
+        print(
+            '++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++'
+        )
 
 
 def main():
